@@ -44,7 +44,7 @@ export function ScientificDisplay({
                 currentPath={[]}
                 textColor={secondaryTextColor}
                 placeholderColor={secondaryTextColor}
-                fontSize={14}
+                fontSize={16}
               />
             </View>
             <Text style={[styles.historyResult, { color: secondaryTextColor }]}>
@@ -54,25 +54,33 @@ export function ScientificDisplay({
         ))}
       </ScrollView>
 
-      {/* Current expression */}
-      <ScrollView 
-        horizontal 
-        style={styles.expressionContainer}
-        contentContainerStyle={styles.expressionContent}
-        showsHorizontalScrollIndicator={false}
-      >
-        <MathRenderer
-          nodes={expression}
-          cursor={cursor}
-          currentPath={[]}
-          textColor={textColor}
-          placeholderColor={secondaryTextColor}
-          fontSize={28}
-        />
-        {expression.length === 0 && (
-          <View style={[styles.emptyCursor, { backgroundColor: '#8B5CF6' }]} />
-        )}
-      </ScrollView>
+      {/* Current expression - larger area */}
+      <View style={styles.expressionWrapper}>
+        <ScrollView 
+          horizontal 
+          style={styles.expressionContainer}
+          contentContainerStyle={styles.expressionContent}
+          showsHorizontalScrollIndicator={false}
+        >
+          {expression.length > 0 ? (
+            <MathRenderer
+              nodes={expression}
+              cursor={cursor}
+              currentPath={[]}
+              textColor={textColor}
+              placeholderColor={secondaryTextColor}
+              fontSize={32}
+            />
+          ) : (
+            <View style={styles.emptyExpression}>
+              <View style={[styles.cursor, { backgroundColor: '#8B5CF6' }]} />
+              <Text style={[styles.placeholderText, { color: secondaryTextColor }]}>
+                Enter expression
+              </Text>
+            </View>
+          )}
+        </ScrollView>
+      </View>
 
       {/* Result */}
       <View style={styles.resultContainer}>
@@ -92,59 +100,76 @@ export function ScientificDisplay({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingTop: 8,
   },
   modeIndicator: {
     alignItems: 'flex-end',
-    paddingRight: 8,
+    paddingRight: 4,
   },
   modeText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
+    letterSpacing: 0.5,
   },
   historyContainer: {
-    maxHeight: 80,
+    maxHeight: 100,
+    marginBottom: 8,
   },
   historyContent: {
     alignItems: 'flex-end',
   },
   historyItem: {
     alignItems: 'flex-end',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   historyExpr: {
     flexDirection: 'row',
   },
   historyResult: {
-    fontSize: 12,
+    fontSize: 14,
     marginTop: 2,
   },
+  expressionWrapper: {
+    flex: 1,
+    minHeight: 80,
+    justifyContent: 'center',
+  },
   expressionContainer: {
-    maxHeight: 80,
-    marginVertical: 8,
+    flexGrow: 0,
   },
   expressionContent: {
     alignItems: 'center',
     paddingRight: 20,
+    minHeight: 60,
   },
-  emptyCursor: {
+  emptyExpression: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cursor: {
     width: 2,
-    height: 32,
+    height: 36,
     borderRadius: 1,
+    marginRight: 4,
+  },
+  placeholderText: {
+    fontSize: 18,
+    fontStyle: 'italic',
   },
   resultContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingBottom: 8,
+    paddingBottom: 12,
+    minHeight: 60,
   },
   equalsSign: {
-    fontSize: 28,
-    marginRight: 8,
+    fontSize: 32,
+    marginRight: 10,
   },
   resultText: {
-    fontSize: 42,
+    fontSize: 52,
     fontWeight: '300',
   },
 });

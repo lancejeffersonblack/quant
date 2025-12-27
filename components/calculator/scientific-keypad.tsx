@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { CalculatorButton } from './calculator-button';
 
 interface ScientificKeypadProps {
   colors: {
@@ -47,112 +46,116 @@ export function ScientificKeypad({
   onFraction,
   onPower,
   onSquareRoot,
-  onNthRoot,
   onTrig,
   onLog,
   onParenthesis,
   onAbs,
-  onVariable,
   onNavigateLeft,
   onNavigateRight,
   onToggleAngleMode,
 }: ScientificKeypadProps) {
   const [showSecond, setShowSecond] = useState(false);
 
-  const SmallButton = ({ label, onPress, bg }: { label: string; onPress: () => void; bg: string }) => (
+  const press = (fn: () => void) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    fn();
+  };
+
+  const Btn = ({ label, onPress, bg, textColor, size = 'normal' }: { 
+    label: string | React.ReactNode; 
+    onPress: () => void; 
+    bg: string; 
+    textColor?: string;
+    size?: 'small' | 'normal';
+  }) => (
     <TouchableOpacity
-      style={[styles.smallButton, { backgroundColor: bg }]}
-      onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onPress(); }}
+      style={[
+        size === 'small' ? styles.smallBtn : styles.btn,
+        { backgroundColor: bg }
+      ]}
+      onPress={() => press(onPress)}
       activeOpacity={0.7}
     >
-      <Text style={[styles.smallButtonText, { color: colors.buttonText }]}>{label}</Text>
+      {typeof label === 'string' ? (
+        <Text style={[
+          size === 'small' ? styles.smallBtnText : styles.btnText,
+          { color: textColor || colors.buttonText }
+        ]}>
+          {label}
+        </Text>
+      ) : label}
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      {/* Scientific functions row 1 */}
+      {/* Row 1: Scientific functions */}
       <View style={styles.row}>
-        <SmallButton label={showSecond ? "2nd" : "2nd"} onPress={() => setShowSecond(!showSecond)} bg={showSecond ? colors.equalsButton : colors.functionButton} />
-        <SmallButton label={angleMode} onPress={onToggleAngleMode} bg={colors.functionButton} />
-        <SmallButton label={showSecond ? "sin⁻¹" : "sin"} onPress={() => onTrig(showSecond ? 'asin' : 'sin')} bg={colors.functionButton} />
-        <SmallButton label={showSecond ? "cos⁻¹" : "cos"} onPress={() => onTrig(showSecond ? 'acos' : 'cos')} bg={colors.functionButton} />
-        <SmallButton label={showSecond ? "tan⁻¹" : "tan"} onPress={() => onTrig(showSecond ? 'atan' : 'tan')} bg={colors.functionButton} />
+        <Btn label="2nd" onPress={() => setShowSecond(!showSecond)} bg={showSecond ? colors.equalsButton : colors.functionButton} textColor={showSecond ? '#FFF' : undefined} size="small" />
+        <Btn label={angleMode} onPress={onToggleAngleMode} bg={colors.functionButton} size="small" />
+        <Btn label={showSecond ? "sin⁻¹" : "sin"} onPress={() => onTrig(showSecond ? 'asin' : 'sin')} bg={colors.functionButton} size="small" />
+        <Btn label={showSecond ? "cos⁻¹" : "cos"} onPress={() => onTrig(showSecond ? 'acos' : 'cos')} bg={colors.functionButton} size="small" />
+        <Btn label={showSecond ? "tan⁻¹" : "tan"} onPress={() => onTrig(showSecond ? 'atan' : 'tan')} bg={colors.functionButton} size="small" />
       </View>
 
-      {/* Scientific functions row 2 */}
+      {/* Row 2: More functions */}
       <View style={styles.row}>
-        <SmallButton label="x²" onPress={() => { onPower(); onNumber('2'); onNavigateRight(); }} bg={colors.functionButton} />
-        <SmallButton label="xʸ" onPress={onPower} bg={colors.functionButton} />
-        <SmallButton label="log" onPress={() => onLog(false)} bg={colors.functionButton} />
-        <SmallButton label="logₓ" onPress={() => onLog(true)} bg={colors.functionButton} />
-        <SmallButton label="ln" onPress={() => { onLog(true); onNumber('e'); onNavigateRight(); }} bg={colors.functionButton} />
+        <Btn label="a/b" onPress={onFraction} bg={colors.functionButton} size="small" />
+        <Btn label="xʸ" onPress={onPower} bg={colors.functionButton} size="small" />
+        <Btn label="√" onPress={onSquareRoot} bg={colors.functionButton} size="small" />
+        <Btn label="log" onPress={() => onLog(false)} bg={colors.functionButton} size="small" />
+        <Btn label="|x|" onPress={onAbs} bg={colors.functionButton} size="small" />
       </View>
 
-      {/* Scientific functions row 3 */}
+      {/* Row 3: Navigation + constants */}
       <View style={styles.row}>
-        <SmallButton label="√" onPress={onSquareRoot} bg={colors.functionButton} />
-        <SmallButton label="ⁿ√" onPress={onNthRoot} bg={colors.functionButton} />
-        <SmallButton label="a/b" onPress={onFraction} bg={colors.functionButton} />
-        <SmallButton label="|x|" onPress={onAbs} bg={colors.functionButton} />
-        <SmallButton label="π" onPress={() => onNumber('3.14159265359')} bg={colors.functionButton} />
+        <Btn label="◀" onPress={onNavigateLeft} bg={colors.operatorButton} size="small" />
+        <Btn label="▶" onPress={onNavigateRight} bg={colors.operatorButton} size="small" />
+        <Btn label="(" onPress={onParenthesis} bg={colors.operatorButton} size="small" />
+        <Btn label="π" onPress={() => onNumber('3.14159265359')} bg={colors.functionButton} size="small" />
+        <Btn label="e" onPress={() => onNumber('2.71828182846')} bg={colors.functionButton} size="small" />
       </View>
 
-      {/* Navigation and variables */}
-      <View style={styles.row}>
-        <SmallButton label="◀" onPress={onNavigateLeft} bg={colors.operatorButton} />
-        <SmallButton label="▶" onPress={onNavigateRight} bg={colors.operatorButton} />
-        <SmallButton label="x" onPress={() => onVariable('x')} bg={colors.functionButton} />
-        <SmallButton label="y" onPress={() => onVariable('y')} bg={colors.functionButton} />
-        <SmallButton label="e" onPress={() => onNumber('2.71828182846')} bg={colors.functionButton} />
-      </View>
-
-      {/* Main keypad */}
-      <View style={styles.mainKeypad}>
-        {/* Row 1: C, (, ), × */}
+      {/* Main number pad - compact grid */}
+      <View style={styles.mainGrid}>
+        {/* Row: C 7 8 9 ÷ */}
         <View style={styles.mainRow}>
-          <CalculatorButton label="C" onPress={onClear} backgroundColor={colors.clearButton} textColor="#FFFFFF" />
-          <CalculatorButton label="(" onPress={onParenthesis} backgroundColor={colors.operatorButton} textColor={colors.operatorText} />
-          <CalculatorButton label=")" onPress={onNavigateRight} backgroundColor={colors.operatorButton} textColor={colors.operatorText} />
-          <CalculatorButton label="×" onPress={() => onOperator('×')} backgroundColor={colors.operatorButton} textColor={colors.operatorText} />
+          <Btn label="C" onPress={onClear} bg={colors.clearButton} textColor="#FFF" />
+          <Btn label="7" onPress={() => onNumber('7')} bg={colors.numberButton} />
+          <Btn label="8" onPress={() => onNumber('8')} bg={colors.numberButton} />
+          <Btn label="9" onPress={() => onNumber('9')} bg={colors.numberButton} />
+          <Btn label="÷" onPress={() => onOperator('÷')} bg={colors.operatorButton} />
         </View>
 
-        {/* Row 2: 7, 8, 9, ÷ */}
+        {/* Row: ⌫ 4 5 6 × */}
         <View style={styles.mainRow}>
-          <CalculatorButton label="7" onPress={() => onNumber('7')} backgroundColor={colors.numberButton} textColor={colors.buttonText} />
-          <CalculatorButton label="8" onPress={() => onNumber('8')} backgroundColor={colors.numberButton} textColor={colors.buttonText} />
-          <CalculatorButton label="9" onPress={() => onNumber('9')} backgroundColor={colors.numberButton} textColor={colors.buttonText} />
-          <CalculatorButton label="÷" onPress={() => onOperator('÷')} backgroundColor={colors.functionButton} textColor={colors.operatorText} />
+          <Btn 
+            label={<Ionicons name="backspace-outline" size={20} color={colors.buttonText} />} 
+            onPress={onBackspace} 
+            bg={colors.numberButton} 
+          />
+          <Btn label="4" onPress={() => onNumber('4')} bg={colors.numberButton} />
+          <Btn label="5" onPress={() => onNumber('5')} bg={colors.numberButton} />
+          <Btn label="6" onPress={() => onNumber('6')} bg={colors.numberButton} />
+          <Btn label="×" onPress={() => onOperator('×')} bg={colors.operatorButton} />
         </View>
 
-        {/* Row 3: 4, 5, 6, - */}
+        {/* Row: % 1 2 3 − */}
         <View style={styles.mainRow}>
-          <CalculatorButton label="4" onPress={() => onNumber('4')} backgroundColor={colors.numberButton} textColor={colors.buttonText} />
-          <CalculatorButton label="5" onPress={() => onNumber('5')} backgroundColor={colors.numberButton} textColor={colors.buttonText} />
-          <CalculatorButton label="6" onPress={() => onNumber('6')} backgroundColor={colors.numberButton} textColor={colors.buttonText} />
-          <CalculatorButton label="−" onPress={() => onOperator('−')} backgroundColor={colors.minusButton} textColor={colors.operatorText} />
+          <Btn label="%" onPress={() => onOperator('%')} bg={colors.functionButton} />
+          <Btn label="1" onPress={() => onNumber('1')} bg={colors.numberButton} />
+          <Btn label="2" onPress={() => onNumber('2')} bg={colors.numberButton} />
+          <Btn label="3" onPress={() => onNumber('3')} bg={colors.numberButton} />
+          <Btn label="−" onPress={() => onOperator('−')} bg={colors.minusButton} />
         </View>
 
-        {/* Row 4: 1, 2, 3, + */}
+        {/* Row: . 0 00 = + */}
         <View style={styles.mainRow}>
-          <CalculatorButton label="1" onPress={() => onNumber('1')} backgroundColor={colors.numberButton} textColor={colors.buttonText} />
-          <CalculatorButton label="2" onPress={() => onNumber('2')} backgroundColor={colors.numberButton} textColor={colors.buttonText} />
-          <CalculatorButton label="3" onPress={() => onNumber('3')} backgroundColor={colors.numberButton} textColor={colors.buttonText} />
-          <CalculatorButton label="+" onPress={() => onOperator('+')} backgroundColor={colors.plusButton} textColor={colors.operatorText} />
-        </View>
-
-        {/* Row 5: ., 0, ⌫, = */}
-        <View style={styles.mainRow}>
-          <CalculatorButton label="." onPress={() => onNumber('.')} backgroundColor={colors.numberButton} textColor={colors.buttonText} />
-          <CalculatorButton label="0" onPress={() => onNumber('0')} backgroundColor={colors.numberButton} textColor={colors.buttonText} />
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.numberButton }]}
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onBackspace(); }}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="backspace-outline" size={24} color={colors.buttonText} />
-          </TouchableOpacity>
-          <CalculatorButton label="=" onPress={onEquals} backgroundColor={colors.equalsButton} textColor="#FFFFFF" />
+          <Btn label="." onPress={() => onNumber('.')} bg={colors.numberButton} />
+          <Btn label="0" onPress={() => onNumber('0')} bg={colors.numberButton} />
+          <Btn label="00" onPress={() => { onNumber('0'); onNumber('0'); }} bg={colors.numberButton} />
+          <Btn label="=" onPress={onEquals} bg={colors.equalsButton} textColor="#FFF" />
+          <Btn label="+" onPress={() => onOperator('+')} bg={colors.plusButton} />
         </View>
       </View>
     </View>
@@ -162,50 +165,53 @@ export function ScientificKeypad({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 8,
-    paddingBottom: 20,
+    paddingBottom: 16,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 6,
-    paddingHorizontal: 4,
   },
-  smallButton: {
+  smallBtn: {
     flex: 1,
-    height: 40,
-    marginHorizontal: 3,
-    borderRadius: 12,
+    height: 36,
+    marginHorizontal: 2,
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.08,
     shadowRadius: 2,
-    elevation: 2,
+    elevation: 1,
   },
-  smallButtonText: {
-    fontSize: 14,
+  smallBtnText: {
+    fontSize: 13,
     fontWeight: '500',
   },
-  mainKeypad: {
-    marginTop: 8,
-    paddingHorizontal: 4,
+  mainGrid: {
+    marginTop: 6,
   },
   mainRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    marginBottom: 6,
   },
-  button: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+  btn: {
+    flex: 1,
+    height: 52,
+    marginHorizontal: 2,
+    borderRadius: 26,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  btnText: {
+    fontSize: 20,
+    fontWeight: '500',
   },
 });
