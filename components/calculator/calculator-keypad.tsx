@@ -221,13 +221,13 @@ export function CalculatorKeypad({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    paddingBottom: 30,
+    paddingHorizontal: 20,
+    paddingBottom: 24,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   bottomSection: {
     flexDirection: 'row',
@@ -235,15 +235,15 @@ const styles = StyleSheet.create({
   },
   leftSection: {
     flex: 1,
-    marginRight: 12,
+    marginRight: 10,
   },
   equalsContainer: {
     justifyContent: 'flex-start',
   },
   backspaceButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',

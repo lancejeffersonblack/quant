@@ -47,40 +47,40 @@ export function CalculatorDisplay({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 24,
     paddingTop: 20,
     justifyContent: 'flex-end',
   },
   historyContainer: {
     flex: 1,
-    maxHeight: 120,
+    maxHeight: 160,
   },
   historyContent: {
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
   historyText: {
-    fontSize: 16,
-    textAlign: 'right',
-    marginBottom: 4,
-  },
-  expressionText: {
     fontSize: 18,
     textAlign: 'right',
-    marginBottom: 8,
+    marginBottom: 6,
+  },
+  expressionText: {
+    fontSize: 22,
+    textAlign: 'right',
+    marginBottom: 12,
   },
   resultContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    paddingBottom: 20,
+    paddingBottom: 24,
   },
   equalsSign: {
-    fontSize: 32,
-    marginRight: 10,
+    fontSize: 36,
+    marginRight: 12,
   },
   resultText: {
-    fontSize: 56,
+    fontSize: 64,
     fontWeight: '300',
   },
 });

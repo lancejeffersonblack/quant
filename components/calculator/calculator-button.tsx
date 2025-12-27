@@ -46,9 +46,9 @@ export function CalculatorButton({
 
 const styles = StyleSheet.create({
   button: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -58,11 +58,11 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   doubleButton: {
-    height: 150,
-    borderRadius: 35,
+    height: 138,
+    borderRadius: 32,
   },
   buttonText: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '500',
   },
 });
