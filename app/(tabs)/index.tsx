@@ -1,23 +1,17 @@
-import { CalculatorDisplay } from "@/components/calculator/calculator-display";
-import { CalculatorKeypad } from "@/components/calculator/calculator-keypad";
-import { ScientificDisplay } from "@/components/calculator/scientific-display";
-import { ScientificKeypad } from "@/components/calculator/scientific-keypad";
-import { ThemeToggle } from "@/components/calculator/theme-toggle";
-import { Colors } from "@/constants/theme";
-import { useCalculator } from "@/hooks/use-calculator";
-import { useScientificCalculator } from "@/hooks/use-scientific-calculator";
-import React, { useState } from "react";
-import {
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { CalculatorDisplay } from '@/components/calculator/calculator-display';
+import { CalculatorKeypad } from '@/components/calculator/calculator-keypad';
+import { ScientificDisplay } from '@/components/calculator/scientific-display';
+import { ScientificKeypad } from '@/components/calculator/scientific-keypad';
+import { Colors } from '@/constants/theme';
+import { useCalculator } from '@/hooks/use-calculator';
+import { useScientificCalculator } from '@/hooks/use-scientific-calculator';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CalculatorScreen() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   const [isScientific, setIsScientific] = useState(false);
   const colors = isDark ? Colors.dark : Colors.light;
 
@@ -25,10 +19,22 @@ export default function CalculatorScreen() {
   const scientificCalc = useScientificCalculator();
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.background }]}
-    >
-      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={[styles.title, { color: isDark ? '#FFF' : colors.buttonText }]}>
+          Calculator
+        </Text>
+        <TouchableOpacity onPress={() => setIsDark(!isDark)} style={styles.themeButton}>
+          <Ionicons 
+            name={isDark ? 'sunny-outline' : 'moon-outline'} 
+            size={22} 
+            color={isDark ? '#FFF' : colors.buttonText} 
+          />
+        </TouchableOpacity>
+      </View>
 
       {/* Mode Toggle */}
       <View style={styles.modeToggleContainer}>
@@ -36,20 +42,11 @@ export default function CalculatorScreen() {
           style={[
             styles.modeButton,
             !isScientific && styles.modeButtonActive,
-            {
-              backgroundColor: !isScientific
-                ? colors.equalsButton
-                : colors.operatorButton,
-            },
+            { backgroundColor: !isScientific ? (isDark ? '#4A4A4A' : '#E5B83A') : 'transparent' },
           ]}
           onPress={() => setIsScientific(false)}
         >
-          <Text
-            style={[
-              styles.modeButtonText,
-              { color: !isScientific ? "#FFF" : colors.buttonText },
-            ]}
-          >
+          <Text style={[styles.modeButtonText, { color: isDark ? '#FFF' : colors.buttonText }]}>
             Basic
           </Text>
         </TouchableOpacity>
@@ -57,20 +54,11 @@ export default function CalculatorScreen() {
           style={[
             styles.modeButton,
             isScientific && styles.modeButtonActive,
-            {
-              backgroundColor: isScientific
-                ? colors.equalsButton
-                : colors.operatorButton,
-            },
+            { backgroundColor: isScientific ? (isDark ? '#4A4A4A' : '#E5B83A') : 'transparent' },
           ]}
           onPress={() => setIsScientific(true)}
         >
-          <Text
-            style={[
-              styles.modeButtonText,
-              { color: isScientific ? "#FFF" : colors.buttonText },
-            ]}
-          >
+          <Text style={[styles.modeButtonText, { color: isDark ? '#FFF' : colors.buttonText }]}>
             Scientific
           </Text>
         </TouchableOpacity>
@@ -86,12 +74,7 @@ export default function CalculatorScreen() {
             textColor={colors.text}
             secondaryTextColor={colors.textSecondary}
             angleMode={scientificCalc.angleMode}
-          />
-
-          <ThemeToggle
-            isDark={isDark}
-            onToggle={() => setIsDark(!isDark)}
-            textColor={colors.textSecondary}
+            cardBackgroundColor={colors.displayCard}
           />
 
           <ScientificKeypad
@@ -134,12 +117,8 @@ export default function CalculatorScreen() {
             currentExpression={basicCalc.currentExpression}
             textColor={colors.text}
             secondaryTextColor={colors.textSecondary}
-          />
-
-          <ThemeToggle
-            isDark={isDark}
-            onToggle={() => setIsDark(!isDark)}
-            textColor={colors.textSecondary}
+            backgroundColor={colors.background}
+            cardBackgroundColor={colors.displayCard}
           />
 
           <CalculatorKeypad
@@ -174,27 +153,36 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  modeToggleContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 8,
-    gap: 8,
+    paddingBottom: 4,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  themeButton: {
+    padding: 8,
+  },
+  modeToggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 8,
+    gap: 4,
   },
   modeButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 12,
   },
-  modeButtonActive: {
-    shadowColor: "#8B5CF6",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
-  },
+  modeButtonActive: {},
   modeButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: 13,
+    fontWeight: '500',
   },
 });

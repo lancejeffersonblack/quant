@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 export const Colors = {
   light: {
     background: '#E8E8EC',
-    displayBackground: '#E8E8EC',
+    displayCard: '#F5F5F7',
     text: '#2D2D3A',
     textSecondary: '#6B6B7B',
     // Button colors
@@ -20,7 +20,7 @@ export const Colors = {
   },
   dark: {
     background: '#1C1C1E',
-    displayBackground: '#2C2C2E',
+    displayCard: '#2C2C2E',
     text: '#FFFFFF',
     textSecondary: '#8E8E93',
     // Button colors

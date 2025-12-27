@@ -1,9 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { CalculatorButton } from './calculator-button';
-
-import * as Haptics from 'expo-haptics';
 
 interface CalculatorKeypadProps {
   colors: {

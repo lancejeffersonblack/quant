@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface CalculatorDisplayProps {
   result: string;
@@ -7,38 +7,37 @@ interface CalculatorDisplayProps {
   currentExpression: string;
   textColor: string;
   secondaryTextColor: string;
+  backgroundColor: string;
+  cardBackgroundColor: string;
 }
 
 export function CalculatorDisplay({
   result,
-  history,
   currentExpression,
   textColor,
   secondaryTextColor,
+  cardBackgroundColor,
 }: CalculatorDisplayProps) {
   return (
     <View style={styles.container}>
-      <ScrollView 
-        style={styles.historyContainer}
-        contentContainerStyle={styles.historyContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {history.map((item, index) => (
-          <Text key={index} style={[styles.historyText, { color: secondaryTextColor }]}>
-            {item}
+      <View style={[styles.displayCard, { backgroundColor: cardBackgroundColor }]}>
+        {/* Expression at top right */}
+        <View style={styles.expressionContainer}>
+          <Text style={[styles.expressionText, { color: secondaryTextColor }]} numberOfLines={1}>
+            {currentExpression || ''}
           </Text>
-        ))}
-        {currentExpression && (
-          <Text style={[styles.expressionText, { color: secondaryTextColor }]}>
-            {currentExpression}
+        </View>
+        
+        {/* Large result number */}
+        <View style={styles.resultContainer}>
+          <Text 
+            style={[styles.resultText, { color: textColor }]} 
+            numberOfLines={1} 
+            adjustsFontSizeToFit
+          >
+            {result}
           </Text>
-        )}
-      </ScrollView>
-      <View style={styles.resultContainer}>
-        <Text style={[styles.equalsSign, { color: secondaryTextColor }]}>=</Text>
-        <Text style={[styles.resultText, { color: textColor }]} numberOfLines={1} adjustsFontSizeToFit>
-          {result}
-        </Text>
+        </View>
       </View>
     </View>
   );
@@ -47,40 +46,38 @@ export function CalculatorDisplay({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 20,
-    justifyContent: 'flex-end',
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
+    justifyContent: 'center',
   },
-  historyContainer: {
+  displayCard: {
     flex: 1,
-    maxHeight: 160,
+    borderRadius: 24,
+    paddingHorizontal: 24,
+    paddingVertical: 20,
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
   },
-  historyContent: {
-    justifyContent: 'flex-end',
+  expressionContainer: {
     alignItems: 'flex-end',
   },
-  historyText: {
-    fontSize: 18,
-    textAlign: 'right',
-    marginBottom: 6,
-  },
   expressionText: {
-    fontSize: 22,
-    textAlign: 'right',
-    marginBottom: 12,
+    fontSize: 16,
+    fontWeight: '400',
   },
   resultContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'flex-end',
-    paddingBottom: 24,
-  },
-  equalsSign: {
-    fontSize: 36,
-    marginRight: 12,
+    flex: 1,
   },
   resultText: {
-    fontSize: 64,
+    fontSize: 72,
     fontWeight: '300',
+    letterSpacing: -2,
   },
 });
