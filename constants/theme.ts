@@ -1,41 +1,47 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
 import { Platform } from 'react-native';
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    background: '#E8E8EC',
+    displayBackground: '#E8E8EC',
+    text: '#2D2D3A',
+    textSecondary: '#6B6B7B',
+    // Button colors
+    clearButton: '#F5A623',
+    operatorButton: '#E8DDD0',
+    functionButton: '#E8DDD0',
+    numberButton: '#F5F5F7',
+    equalsButton: '#8B5CF6',
+    minusButton: '#C9B896',
+    plusButton: '#C9B896',
+    // Button text
+    buttonText: '#2D2D3A',
+    operatorText: '#2D2D3A',
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    background: '#1C1C1E',
+    displayBackground: '#2C2C2E',
+    text: '#FFFFFF',
+    textSecondary: '#8E8E93',
+    // Button colors
+    clearButton: '#F5A623',
+    operatorButton: '#3A3A3C',
+    functionButton: '#3A3A3C',
+    numberButton: '#2C2C2E',
+    equalsButton: '#8B5CF6',
+    minusButton: '#5C5040',
+    plusButton: '#5C5040',
+    // Button text
+    buttonText: '#FFFFFF',
+    operatorText: '#FFFFFF',
   },
 };
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
     sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
     serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
     rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
     mono: 'ui-monospace',
   },
   default: {
