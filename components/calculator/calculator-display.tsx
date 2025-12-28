@@ -1,5 +1,7 @@
+import * as Clipboard from 'expo-clipboard';
+import * as Haptics from 'expo-haptics';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
 interface CalculatorDisplayProps {
   result: string;
@@ -18,9 +20,20 @@ export function CalculatorDisplay({
   secondaryTextColor,
   cardBackgroundColor,
 }: CalculatorDisplayProps) {
+  const handleLongPress = async () => {
+    const textToCopy = result.replace(/,/g, ''); // Remove formatting commas
+    await Clipboard.setStringAsync(textToCopy);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert('Copied', textToCopy, [{ text: 'OK' }], { cancelable: true });
+  };
+
   return (
     <View style={styles.container}>
-      <View style={[styles.displayCard, { backgroundColor: cardBackgroundColor }]}>
+      <Pressable 
+        style={[styles.displayCard, { backgroundColor: cardBackgroundColor }]}
+        onLongPress={handleLongPress}
+        delayLongPress={400}
+      >
         {/* Expression at top right */}
         <View style={styles.expressionContainer}>
           <Text style={[styles.expressionText, { color: secondaryTextColor }]} numberOfLines={1}>
@@ -38,7 +51,7 @@ export function CalculatorDisplay({
             {result}
           </Text>
         </View>
-      </View>
+      </Pressable>
     </View>
   );
 }

@@ -1,6 +1,8 @@
 import type { CursorPosition, MathNode } from '@/hooks/use-scientific-calculator';
+import * as Clipboard from 'expo-clipboard';
+import * as Haptics from 'expo-haptics';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MathRenderer } from './math-renderer';
 
 interface ScientificDisplayProps {
@@ -23,9 +25,19 @@ export function ScientificDisplay({
   angleMode,
   cardBackgroundColor,
 }: ScientificDisplayProps) {
+  const handleLongPress = async () => {
+    await Clipboard.setStringAsync(result);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert('Copied', result, [{ text: 'OK' }], { cancelable: true });
+  };
+
   return (
     <View style={styles.container}>
-      <View style={[styles.displayCard, { backgroundColor: cardBackgroundColor }]}>
+      <Pressable 
+        style={[styles.displayCard, { backgroundColor: cardBackgroundColor }]}
+        onLongPress={handleLongPress}
+        delayLongPress={400}
+      >
         {/* Mode and expression at top */}
         <View style={styles.topRow}>
           <Text style={[styles.modeText, { color: secondaryTextColor }]}>{angleMode}</Text>
@@ -60,7 +72,7 @@ export function ScientificDisplay({
             {result}
           </Text>
         </View>
-      </View>
+      </Pressable>
     </View>
   );
 }

@@ -1,6 +1,8 @@
 import type { Formula, FormulaVariable } from '@/hooks/use-formula-calculator';
+import * as Clipboard from 'expo-clipboard';
+import * as Haptics from 'expo-haptics';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface FormulaDisplayProps {
   formula: Formula | null;
@@ -25,6 +27,16 @@ export function FormulaDisplay({
   accentColor,
   onVariableSelect,
 }: FormulaDisplayProps) {
+  const handleLongPress = async () => {
+    if (!result || result === '—') return;
+    // Extract just the numeric part if possible
+    const match = result.match(/=\s*(.+)$/);
+    const textToCopy = match ? match[1].trim() : result;
+    await Clipboard.setStringAsync(textToCopy);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert('Copied', textToCopy, [{ text: 'OK' }], { cancelable: true });
+  };
+
   if (!formula) {
     return (
       <View style={styles.container}>
@@ -39,7 +51,11 @@ export function FormulaDisplay({
 
   return (
     <View style={styles.container}>
-      <View style={[styles.displayCard, { backgroundColor: cardBackgroundColor }]}>
+      <Pressable 
+        style={[styles.displayCard, { backgroundColor: cardBackgroundColor }]}
+        onLongPress={handleLongPress}
+        delayLongPress={400}
+      >
         {/* Formula name and equation */}
         <View style={styles.formulaHeader}>
           <Text style={[styles.formulaName, { color: textColor }]}>{formula.name}</Text>
@@ -93,7 +109,7 @@ export function FormulaDisplay({
             {result || '—'}
           </Text>
         </View>
-      </View>
+      </Pressable>
     </View>
   );
 }
