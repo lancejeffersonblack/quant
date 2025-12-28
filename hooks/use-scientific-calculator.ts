@@ -1,4 +1,5 @@
-import { useCallback, useState } from "react";
+import { useCalculatorStore } from "@/stores/calculator-store";
+import { useCallback, useEffect, useState } from "react";
 
 export type MathNode =
   | { type: "number"; value: string }
@@ -178,6 +179,37 @@ export function useScientificCalculator() {
   >([]);
   const [result, setResult] = useState<string>("0");
   const [angleMode, setAngleMode] = useState<"DEG" | "RAD">("DEG");
+
+  const { pendingInsert, consumePendingInsert } = useCalculatorStore();
+
+  // Handle pending insert from constants
+  useEffect(() => {
+    if (pendingInsert) {
+      const value = consumePendingInsert();
+      if (value) {
+        setExpression((prev) => {
+          const currentNodes = getNodesAtPath(prev, cursor.path);
+          const hasPlaceholder = currentNodes[cursor.index]?.type === "placeholder";
+          
+          return updateNodesAtPath(prev, cursor.path, (arr) => {
+            if (hasPlaceholder) {
+              return [
+                ...arr.slice(0, cursor.index),
+                { type: "number", value },
+                ...arr.slice(cursor.index + 1),
+              ];
+            }
+            return [
+              ...arr.slice(0, cursor.index),
+              { type: "number", value },
+              ...arr.slice(cursor.index),
+            ];
+          });
+        });
+        setCursor((prev) => ({ ...prev, index: prev.index + 1 }));
+      }
+    }
+  }, [pendingInsert, consumePendingInsert, cursor]);
 
   const handleNumber = useCallback(
     (num: string) => {

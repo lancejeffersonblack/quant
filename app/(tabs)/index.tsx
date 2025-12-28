@@ -1,5 +1,6 @@
 import { CalculatorDisplay } from "@/components/calculator/calculator-display";
 import { CalculatorKeypad } from "@/components/calculator/calculator-keypad";
+import { ConstantsDisplay } from "@/components/calculator/constants-display";
 import { FormulaDisplay } from "@/components/calculator/formula-display";
 import { FormulaKeypad } from "@/components/calculator/formula-keypad";
 import {
@@ -13,6 +14,7 @@ import { Colors } from "@/constants/theme";
 import { useCalculator } from "@/hooks/use-calculator";
 import { useFormulaCalculator } from "@/hooks/use-formula-calculator";
 import { useScientificCalculator } from "@/hooks/use-scientific-calculator";
+import { useCalculatorStore } from "@/stores/calculator-store";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useRef, useState } from "react";
 import {
@@ -28,12 +30,44 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function CalculatorScreen() {
   const [isDark, setIsDark] = useState(true);
   const [mode, setMode] = useState<CalculatorMode>("basic");
+  const [previousMode, setPreviousMode] = useState<CalculatorMode>("basic");
+  const [isAddingConstant, setIsAddingConstant] = useState(false);
+  const [newConstant, setNewConstant] = useState({ name: "", value: "", symbol: "" });
   const colors = isDark ? Colors.dark : Colors.light;
   const drawerRef = useRef<ModeDrawerRef>(null);
 
   const basicCalc = useCalculator();
   const scientificCalc = useScientificCalculator();
   const formulaCalc = useFormulaCalculator();
+  
+  const { 
+    getAllConstants, 
+    userConstants, 
+    addConstant, 
+    removeConstant,
+    setPendingInsert 
+  } = useCalculatorStore();
+
+  const handleModeChange = (newMode: CalculatorMode) => {
+    if (newMode === "constants") {
+      setPreviousMode(mode === "constants" ? previousMode : mode);
+    }
+    setMode(newMode);
+  };
+
+  const handleConstantSelect = (constant: { value: string }) => {
+    setPendingInsert(constant.value);
+    // Go back to previous calculator mode
+    setMode(previousMode === "formula" ? "basic" : previousMode);
+  };
+
+  const handleSaveConstant = () => {
+    if (newConstant.name && newConstant.value && newConstant.symbol) {
+      addConstant(newConstant.name, newConstant.value, newConstant.symbol);
+      setNewConstant({ name: "", value: "", symbol: "" });
+      setIsAddingConstant(false);
+    }
+  };
 
   const renderContent = () => {
     switch (mode) {
@@ -122,6 +156,31 @@ export default function CalculatorScreen() {
           </>
         );
 
+      case "constants":
+        return (
+          <ConstantsDisplay
+            constants={getAllConstants()}
+            userConstants={userConstants}
+            isAdding={isAddingConstant}
+            newConstant={newConstant}
+            textColor={colors.text}
+            secondaryTextColor={colors.textSecondary}
+            cardBackgroundColor={colors.displayCard}
+            accentColor={colors.equalsButton}
+            onConstantSelect={handleConstantSelect}
+            onDeleteConstant={removeConstant}
+            onStartAdding={() => setIsAddingConstant(true)}
+            onCancelAdding={() => {
+              setIsAddingConstant(false);
+              setNewConstant({ name: "", value: "", symbol: "" });
+            }}
+            onNewConstantChange={(field: 'name' | 'value' | 'symbol', value: string) => 
+              setNewConstant(prev => ({ ...prev, [field]: value }))
+            }
+            onSaveConstant={handleSaveConstant}
+          />
+        );
+
       default:
         return (
           <>
@@ -208,7 +267,7 @@ export default function CalculatorScreen() {
         <ModeDrawer
           ref={drawerRef}
           mode={mode}
-          onModeChange={setMode}
+          onModeChange={handleModeChange}
           isDark={isDark}
           colors={{
             background: colors.background,

@@ -11,7 +11,7 @@ import Animated, {
 
 const DRAWER_WIDTH = 200;
 
-export type CalculatorMode = 'basic' | 'scientific' | 'formula';
+export type CalculatorMode = 'basic' | 'scientific' | 'formula' | 'constants';
 
 export interface ModeDrawerRef {
   open: () => void;
@@ -78,6 +78,7 @@ export const ModeDrawer = forwardRef<ModeDrawerRef, ModeDrawerProps>(
       { id: 'basic', label: 'Basic', icon: 'calculator-outline' },
       { id: 'scientific', label: 'Scientific', icon: 'flask-outline' },
       { id: 'formula', label: 'Formulas', icon: 'document-text-outline' },
+      { id: 'constants', label: 'Constants', icon: 'infinite-outline' },
     ];
 
     return (

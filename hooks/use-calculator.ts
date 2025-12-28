@@ -1,10 +1,30 @@
-import { useCallback, useState } from 'react';
+import { useCalculatorStore } from '@/stores/calculator-store';
+import { useCallback, useEffect, useState } from 'react';
 
 export function useCalculator() {
   const [display, setDisplay] = useState('0');
   const [history, setHistory] = useState<string[]>([]);
   const [currentExpression, setCurrentExpression] = useState('');
   const [shouldResetDisplay, setShouldResetDisplay] = useState(false);
+  
+  const { pendingInsert, consumePendingInsert } = useCalculatorStore();
+
+  // Handle pending insert from constants
+  useEffect(() => {
+    if (pendingInsert) {
+      const value = consumePendingInsert();
+      if (value) {
+        if (shouldResetDisplay || display === '0') {
+          setDisplay(value);
+          setCurrentExpression(prev => prev === '' || prev === '0' ? value : prev + value);
+        } else {
+          setDisplay(prev => prev + value);
+          setCurrentExpression(prev => prev + value);
+        }
+        setShouldResetDisplay(false);
+      }
+    }
+  }, [pendingInsert, consumePendingInsert, shouldResetDisplay, display]);
 
   const formatNumber = (num: string): string => {
     const parts = num.split('.');
