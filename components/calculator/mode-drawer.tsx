@@ -3,13 +3,15 @@ import React, { forwardRef, useImperativeHandle } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
-    interpolate,
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
 } from 'react-native-reanimated';
 
 const DRAWER_WIDTH = 200;
+
+export type CalculatorMode = 'basic' | 'scientific' | 'formula';
 
 export interface ModeDrawerRef {
   open: () => void;
@@ -17,8 +19,8 @@ export interface ModeDrawerRef {
 }
 
 interface ModeDrawerProps {
-  isScientific: boolean;
-  onModeChange: (scientific: boolean) => void;
+  mode: CalculatorMode;
+  onModeChange: (mode: CalculatorMode) => void;
   isDark: boolean;
   colors: {
     background: string;
@@ -28,7 +30,7 @@ interface ModeDrawerProps {
 }
 
 export const ModeDrawer = forwardRef<ModeDrawerRef, ModeDrawerProps>(
-  function ModeDrawer({ isScientific, onModeChange, isDark, colors }, ref) {
+  function ModeDrawer({ mode, onModeChange, isDark, colors }, ref) {
     const translateX = useSharedValue(-DRAWER_WIDTH);
     const isOpen = useSharedValue(false);
 
@@ -67,10 +69,16 @@ export const ModeDrawer = forwardRef<ModeDrawerRef, ModeDrawerProps>(
       pointerEvents: translateX.value > -DRAWER_WIDTH + 10 ? 'auto' : 'none',
     }));
 
-    const handleModeChange = (scientific: boolean) => {
-      onModeChange(scientific);
+    const handleModeChange = (newMode: CalculatorMode) => {
+      onModeChange(newMode);
       scrollTo(false);
     };
+
+    const modes: { id: CalculatorMode; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+      { id: 'basic', label: 'Basic', icon: 'calculator-outline' },
+      { id: 'scientific', label: 'Scientific', icon: 'flask-outline' },
+      { id: 'formula', label: 'Formulas', icon: 'document-text-outline' },
+    ];
 
     return (
       <>
@@ -89,45 +97,28 @@ export const ModeDrawer = forwardRef<ModeDrawerRef, ModeDrawerProps>(
                 Mode
               </Text>
 
-              <TouchableOpacity
-                style={[
-                  styles.modeOption,
-                  !isScientific && { backgroundColor: isDark ? '#4A4A4A' : '#E5B83A' },
-                ]}
-                onPress={() => handleModeChange(false)}
-              >
-                <Ionicons
-                  name="calculator-outline"
-                  size={20}
-                  color={isDark ? '#FFF' : colors.buttonText}
-                />
-                <Text style={[styles.modeText, { color: isDark ? '#FFF' : colors.buttonText }]}>
-                  Basic
-                </Text>
-                {!isScientific && (
-                  <Ionicons name="checkmark" size={18} color={isDark ? '#FFF' : colors.buttonText} />
-                )}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.modeOption,
-                  isScientific && { backgroundColor: isDark ? '#4A4A4A' : '#E5B83A' },
-                ]}
-                onPress={() => handleModeChange(true)}
-              >
-                <Ionicons
-                  name="flask-outline"
-                  size={20}
-                  color={isDark ? '#FFF' : colors.buttonText}
-                />
-                <Text style={[styles.modeText, { color: isDark ? '#FFF' : colors.buttonText }]}>
-                  Scientific
-                </Text>
-                {isScientific && (
-                  <Ionicons name="checkmark" size={18} color={isDark ? '#FFF' : colors.buttonText} />
-                )}
-              </TouchableOpacity>
+              {modes.map((m) => (
+                <TouchableOpacity
+                  key={m.id}
+                  style={[
+                    styles.modeOption,
+                    mode === m.id && { backgroundColor: isDark ? '#4A4A4A' : '#E5B83A' },
+                  ]}
+                  onPress={() => handleModeChange(m.id)}
+                >
+                  <Ionicons
+                    name={m.icon}
+                    size={20}
+                    color={isDark ? '#FFF' : colors.buttonText}
+                  />
+                  <Text style={[styles.modeText, { color: isDark ? '#FFF' : colors.buttonText }]}>
+                    {m.label}
+                  </Text>
+                  {mode === m.id && (
+                    <Ionicons name="checkmark" size={18} color={isDark ? '#FFF' : colors.buttonText} />
+                  )}
+                </TouchableOpacity>
+              ))}
             </View>
           </Animated.View>
         </GestureDetector>
