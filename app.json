@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "quant",
+    "name": "Quant",
     "slug": "quant",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.blackdice.quant",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
